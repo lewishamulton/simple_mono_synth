@@ -29,7 +29,9 @@ public:
 private:
     //ADSR
     juce::ADSR adsr;
-    juce::ADSR::Parameters adsrParams; 
+    juce::ADSR::Parameters adsrParams;
+    
+    juce::AudioBuffer<float> synthBuffer; 
     
     //Oscillator declarations
     //juce::dsp::Oscillator<float> osc { [](float x) { return std::sin (x); }};   sine wave
