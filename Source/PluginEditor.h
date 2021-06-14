@@ -26,6 +26,9 @@ public:
 
 private:
     
+    
+    //method to affect slider parameters
+    void setSliderParams (juce::Slider& slider);
     //Sliders for ADSR
     juce::Slider attackSlider;
     juce::Slider decaySlider;

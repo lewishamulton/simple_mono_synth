@@ -55,20 +55,22 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     
     
     //between 0 and 1 for linear
-    gain.setGainLinear(0.01f);
-    
-    
-    //arbitrary params for adsr for testing
-    adsrParams.attack = 0.08f;
-    adsrParams.decay = 0.8f;
-    adsrParams.sustain = 1.0f;
-    adsrParams.release = 1.5f;
-    adsr.setParameters(adsrParams);
-    
+    gain.setGainLinear(0.3f);
     
     
     //prepare to play has been called, audio callback members can be used elsewhere
     isPrepared = true;
+};
+
+void SynthVoice::updateADSR(const float attack, const float decay, const float release, const float sustain) {
+    
+    
+    adsrParams.attack = attack;
+    adsrParams.decay = decay;
+    adsrParams.sustain = sustain;
+    adsrParams.release = release;
+    
+    adsr.setParameters(adsrParams);
 }; 
 
 
