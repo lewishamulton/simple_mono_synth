@@ -62,15 +62,10 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     isPrepared = true;
 };
 
-void SynthVoice::updateADSR(const float attack, const float decay, const float release, const float sustain) {
+void SynthVoice::update(const float attack, const float decay, const float release, const float sustain) {
     
+    adsr.updateADSR(attack, decay, release, sustain);
     
-    adsrParams.attack = attack;
-    adsrParams.decay = decay;
-    adsrParams.sustain = sustain;
-    adsrParams.release = release;
-    
-    adsr.setParameters(adsrParams);
 }; 
 
 
@@ -105,6 +100,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
     
     
+    //crashes if startSample before operation is not zero
     if(startSample != 0) {
         jassertfalse; 
     }

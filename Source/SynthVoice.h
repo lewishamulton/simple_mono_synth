@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "SynthSound.h"
+#include "Data/AdsrData.h"
 
 class SynthVoice : public juce::SynthesiserVoice {
 public:
@@ -24,14 +25,15 @@ public:
     
     void renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples) override;
     
-    void updateADSR (const float attack, const float decay, const float release, const float sustain); 
+    //i.e ADSR, in future pitch wheel could be added
+    void update (const float attack, const float decay, const float release, const float sustain);
     
     
     
 private:
-    //ADSR
-    juce::ADSR adsr;
-    juce::ADSR::Parameters adsrParams;
+    
+    //ADSR Data Object (controls updating paramters)
+    AdsrData adsr;
     
     juce::AudioBuffer<float> synthBuffer; 
     
