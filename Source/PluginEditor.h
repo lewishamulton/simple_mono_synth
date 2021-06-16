@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "UI/AdsrComponent.h"
+#include "UI/OscComponent.h"
 
 //==============================================================================
 /**
@@ -31,17 +32,10 @@ private:
     //method to affect slider parameters
     void setSliderParams (juce::Slider& slider);
     
-
-    //Combo box for oscillator type
-    juce::ComboBox oscSelector;
-    
     TapSynthAudioProcessor& audioProcessor;
-    
+    OscComponent osc;
     AdsrComponent adsr;
     
-   
-    
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> oscSelAttachment;
     
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TapSynthAudioProcessorEditor)

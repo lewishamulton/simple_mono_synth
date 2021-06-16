@@ -12,6 +12,8 @@
 #include <JuceHeader.h>
 #include "SynthSound.h"
 #include "Data/AdsrData.h"
+#include "Data/OscData.h"
+
 
 class SynthVoice : public juce::SynthesiserVoice {
 public:
@@ -25,8 +27,11 @@ public:
     
     void renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples) override;
     
-    //i.e ADSR, in future pitch wheel could be added
+    //i.e ADSR- in future pitch wheel could be added
     void update (const float attack, const float decay, const float release, const float sustain);
+    
+    //inline function used to connect oscillator data to pluginprocessor
+    OscData& getOscillator() { return osc; }
     
     
     
@@ -38,9 +43,10 @@ private:
     juce::AudioBuffer<float> synthBuffer; 
     
     //Oscillator declarations
+    OscData osc;
     //juce::dsp::Oscillator<float> osc { [](float x) { return std::sin (x); }};   sine wave
     //juce::dsp::Oscillator<float> osc { [](float x) { return x <0.0f ? -0.1f : 0.01f; }}; square wave
-    juce::dsp::Oscillator<float> osc { [](float x) { return x / juce::MathConstants<float>::pi; }}; //saw wave
+    //juce::dsp::Oscillator<float> osc { [](float x) { return x / juce::MathConstants<float>::pi; }}; //saw wave
     juce::dsp::Gain<float> gain;
     
     //check used to ensure that nothing is used in audio callback before it's instantiated

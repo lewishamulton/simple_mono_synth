@@ -18,7 +18,7 @@ bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound) {
 void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
     
     //sets the oscillator frequency allowing for different notes to be played 
-    osc.setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    osc.setWaveFrequency(midiNoteNumber);
     adsr.noteOn();
 };
 
@@ -49,8 +49,9 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
-    spec.numChannels = outputChannels; 
-    osc.prepare(spec);
+    spec.numChannels = outputChannels;
+    
+    osc.prepareToPlay(spec);
     gain.prepare(spec);
     
     
@@ -90,8 +91,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     
     //create alias
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
-    //process context replacing
-    osc.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    osc.getNextAudioBlock(audioBlock);
     //once osc is run run audioBlock contains all sine info that gain can then
     //act upon
     gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));

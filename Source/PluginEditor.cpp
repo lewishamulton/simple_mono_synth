@@ -5,14 +5,14 @@
 
 //==============================================================================
 TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), adsr (audioProcessor.apvts)
+    : AudioProcessorEditor (&p), audioProcessor (p), osc (audioProcessor.apvts, "OSC1WAVETYPE"), adsr (audioProcessor.apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
-        
-    oscSelAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, "OSC", oscSelector);
-    
+            
+    //make oscillator visible in GUI
+    addAndMakeVisible(osc);
     
     //make ADSR visible in GUI
     addAndMakeVisible(adsr);
@@ -37,6 +37,7 @@ void TapSynthAudioProcessorEditor::paint (juce::Graphics& g)
 void TapSynthAudioProcessorEditor::resized()
 {
     //x,y,width,height
+    osc.setBounds(10, 10, 100, 30);
     adsr.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
