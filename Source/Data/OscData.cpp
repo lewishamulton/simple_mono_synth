@@ -12,6 +12,7 @@
 
 void OscData::prepareToPlay(juce::dsp::ProcessSpec& spec)
 {
+    fmOsc.prepare(spec);
     prepare(spec); 
 }
 
@@ -45,15 +46,38 @@ void OscData::setWaveType(const int choice)
 
 void OscData::setWaveFrequency(const int midiNoteNumber)
 {
-    //sets the oscillator frequency allowing for different notes to be played 
-    setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    //sets the oscillator frequency allowing for different notes to be played, with fmMod modulating freq 
+    setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber) + fmMod);
+    lastMidiNote = midiNoteNumber;
 
 }
 
 void OscData::getNextAudioBlock(juce::dsp::AudioBlock<float>& block)
 {
+    
+    //sample by sample processing for fm synthesis
+    for (int ch =0; ch < block.getNumChannels(); ++ch)
+    {
+        for (int s = 0; s < block.getNumSamples(); ++s)
+        {
+            //value of the wave at one given point in time
+            fmMod = fmOsc.processSample(block.getSample(ch, s)) * fmDepth;
+        }
+    }
     //process context replacing
     process(juce::dsp::ProcessContextReplacing<float>(block));
+}
+
+void OscData::setFmParams(const float depth, const float freq)
+{
+    fmOsc.setFrequency(freq);
+    fmDepth = depth;
+    
+    auto currentFreq = juce::MidiMessage::getMidiNoteInHertz(lastMidiNote) + fmMod;
+    
+    //updates main oscillator, ensuring no negative frequencies
+    setFrequency(currentFreq >=0 ? currentFreq : currentFreq * -1.0f);
+    
 }
 
 

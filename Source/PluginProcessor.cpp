@@ -158,10 +158,14 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& release = *apvts.getRawParameterValue("RELEASE");
             
             auto& oscWaveChoice = *apvts.getRawParameterValue("OSC1WAVETYPE");
+            auto& fmDepth = *apvts.getRawParameterValue("OSC1FMFREQ");
+            auto& fmFreq = *apvts.getRawParameterValue("OSC1FMDEPTH");
             
+            
+            voice->getOscillator().setWaveType(oscWaveChoice);
+            voice->getOscillator().setFmParams(fmDepth, fmFreq);
             //load shows it's an atomic float
             voice->update(attack.load(), decay.load(), release.load(), sustain.load());
-            voice->getOscillator().setWaveType(oscWaveChoice); 
         }
             
     }
@@ -196,8 +200,7 @@ void TapSynthAudioProcessor::setStateInformation (const void* data, int sizeInBy
     // whose contents will have been created by the getStateInformation() call.
 }
 
-//==============================================================================
-// This creates new instances of the plugin..
+
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new TapSynthAudioProcessor();
@@ -206,7 +209,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::createParams()
 {
         
-    //Combo box to switch oscillators
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC", "Oscillator", juce::StringArray{"Sine","Saw", "Square"}, 0));
@@ -218,10 +220,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     params.push_back (std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 1.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
     
-    //osciallator selection
-    //0 is default option
+    //OSC Select, 0 is default option
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray {"Sine","Saw","Square"}, 0));
     
+    
+    //FM
+    //skew factor is 0.3, logarithmic, slider focuses on lower end of freq/depth
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMFREQ", "Osc 1 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01, 0.3 }, 0.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMDEPTH", "Osc 1 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01, 0.3 }, 0.0f));
     
     return { params.begin(), params.end() };
 
