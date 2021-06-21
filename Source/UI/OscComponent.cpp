@@ -22,7 +22,13 @@ OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::Stri
     
     //slider for fm frequency/depth
     setSliderWithLabel(fmFreqSlider, fmFreqLabel, apvts, fmFreqId, fmFreqAttachment);
-    setSliderWithLabel(fmDepthSlider, fmDepthLabel, apvts, fmDepthId, fmDepthAttachment); 
+    setSliderWithLabel(fmDepthSlider, fmDepthLabel, apvts, fmDepthId, fmDepthAttachment);
+    
+    //oscillator selector 
+    waveSelectorLabel.setColour (juce::Label::ColourIds::textColourId, juce::Colours::white);
+    waveSelectorLabel.setFont (15.0f);
+    waveSelectorLabel.setJustificationType (juce::Justification::left);
+    addAndMakeVisible (waveSelectorLabel);
 
     
     
@@ -34,26 +40,34 @@ OscComponent::~OscComponent()
 
 void OscComponent::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::black);
+    auto bounds = getLocalBounds().reduced (5);
+    auto labelSpace = bounds.removeFromTop (25.0f);
+    
+    g.fillAll (juce::Colours::black);
+    g.setColour (juce::Colours::white);
+    g.setFont (20.0f);
+    g.drawText ("Oscillator", labelSpace.withX (5), juce::Justification::left);
+    g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
     
 }
 
 void OscComponent::resized()
 {
     //static numbers for now
-    const auto sliderPosY = 80;
+    const auto startY = 55;
     const auto sliderWidth = 100;
     const auto sliderHeight = 90;
     const auto labelYOffset = 20;
     const auto labelHeight = 20;
     
-    oscWaveSelector.setBounds(0, 0, 90, 20);
+    oscWaveSelector.setBounds (10, startY + 5, 90, 30);
+    waveSelectorLabel.setBounds (10, startY - labelYOffset, 90, labelHeight);
     
-    fmFreqSlider.setBounds(0, sliderPosY, sliderWidth,sliderHeight);
-    fmFreqLabel.setBounds(fmFreqSlider.getX(), fmFreqSlider.getY() - labelYOffset, fmFreqSlider.getWidth(), labelHeight);
-    
-    fmDepthSlider.setBounds(fmFreqSlider.getRight(), sliderPosY, sliderWidth, sliderHeight);
-    fmDepthLabel.setBounds(fmDepthSlider.getX(), fmDepthSlider.getY() - labelYOffset, fmDepthSlider.getWidth(), labelHeight);
+    fmFreqSlider.setBounds (oscWaveSelector.getRight(), startY, sliderWidth, sliderHeight);
+    fmFreqLabel.setBounds (fmFreqSlider.getX(), fmFreqSlider.getY() - labelYOffset, fmFreqSlider.getWidth(), labelHeight);
+
+    fmDepthSlider.setBounds (fmFreqSlider.getRight(), startY, sliderWidth, sliderHeight);
+    fmDepthLabel.setBounds (fmDepthSlider.getX(), fmDepthSlider.getY() - labelYOffset, fmDepthSlider.getWidth(), labelHeight);
     
     
 }

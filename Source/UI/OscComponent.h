@@ -37,7 +37,8 @@ private:
     std::unique_ptr<Attachment> fmDepthAttachment;
     
     juce::Label fmFreqLabel { "FM Freq", "FM Freq" };
-    juce::Label fmDepthLabel {"FM Depth", "FM Depth" }; 
+    juce::Label fmDepthLabel {"FM Depth", "FM Depth" };
+    juce::Label waveSelectorLabel { "Wave Type", "Wave Type" };
     
     void setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment);
     
