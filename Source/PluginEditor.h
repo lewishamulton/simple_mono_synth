@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "UI/AdsrComponent.h"
 #include "UI/OscComponent.h"
+#include "UI/FilterComponent.h"
 
 //==============================================================================
 /**
@@ -35,6 +36,7 @@ private:
     TapSynthAudioProcessor& audioProcessor;
     OscComponent osc;
     AdsrComponent adsr;
+    FilterComponent filter; 
     
     
 

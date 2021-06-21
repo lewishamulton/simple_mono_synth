@@ -98,6 +98,7 @@ void TapSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
         }
         
     }
+    filter.prepareToPlay(sampleRate, samplesPerBlock,getTotalNumOutputChannels());
     
 }
 
@@ -167,10 +168,22 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             //load shows it's an atomic float
             voice->update(attack.load(), decay.load(), release.load(), sustain.load());
         }
+        
             
     }
     
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    
+    auto& filterType = *apvts.getRawParameterValue("FILTERTYPE");
+    auto& cutoff = *apvts.getRawParameterValue("FILTERFREQ");
+    auto& resonance = *apvts.getRawParameterValue("FILTERRES");
+                                        
+    //Filter applied to all Synth Voices
+    filter.updateParameters(filterType, cutoff, resonance);
+    
+    //call process to actually run audio through it
+    filter.process(buffer);
+    
 
     
 }
@@ -228,6 +241,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     //skew factor is 0.3, logarithmic, slider focuses on lower end of freq/depth
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMFREQ", "Osc 1 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01, 0.3 }, 0.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMDEPTH", "Osc 1 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01, 0.3 }, 0.0f));
+    
+    
+    //Filter
+     params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray {"Low-Pass","Band-Pass","High-Pass"}, 0));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERFREQ", "Filter Freq", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f,0.6f }, 200.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f}, 1.0f));
+    
     
     return { params.begin(), params.end() };
 
