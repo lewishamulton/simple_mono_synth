@@ -39,7 +39,7 @@ void FilterData::process (juce::AudioBuffer<float>& buffer)
 }
 
 //for enumarated type
-void FilterData::updateParameters (const int filterType, const float freq, const float resonance)
+void FilterData::updateParameters (const int filterType, const float freq, const float resonance, const float modulator)
 {
     switch (filterType) {
         case 0:
@@ -55,7 +55,11 @@ void FilterData::updateParameters (const int filterType, const float freq, const
             break;
     }
     
-    filter.setCutoffFrequency(freq);
+    float modFreq = freq * modulator;
+    //input validation to make sure frequency is between filter lower and upper bounds
+    modFreq = std::fmin(std::fmax(modFreq, 20.0f), 20000.0f);
+    
+    filter.setCutoffFrequency(modFreq);
     filter.setResonance(resonance);
     
 }

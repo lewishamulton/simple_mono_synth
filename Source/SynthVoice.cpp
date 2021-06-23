@@ -10,21 +10,26 @@
 
 #include "SynthVoice.h"
 
-bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound) {
+bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound)
+{
 
     return dynamic_cast<juce::SynthesiserSound*>(sound) != nullptr;
 };
 
-void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
+void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
+{
     
     //sets the oscillator frequency allowing for different notes to be played 
     osc.setWaveFrequency(midiNoteNumber);
     adsr.noteOn();
+    modAdsr.noteOn();
 };
 
-void SynthVoice::stopNote (float velocity, bool allowTailOff) {
+void SynthVoice::stopNote (float velocity, bool allowTailOff)
+{
     
     adsr.noteOff();
+    modAdsr.noteOff();
     
     //tells synth it is finished
     if(!allowTailOff || !adsr.isActive()){
@@ -33,7 +38,8 @@ void SynthVoice::stopNote (float velocity, bool allowTailOff) {
     
 };
 
-void SynthVoice::controllerMoved (int controllerNumber, int newControllerValue) {
+void SynthVoice::controllerMoved (int controllerNumber, int newControllerValue)
+{
     
 };
 
@@ -41,18 +47,23 @@ void SynthVoice::pitchWheelMoved (int newPitchWheelValue) {
     
 };
 
-void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels) {
+void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannels)
+{
     
     
-    adsr.setSampleRate(sampleRate);
     
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = outputChannels;
     
+    //process chain oscillator -> amp adsr -> filter -> mod (filter) adsr
     osc.prepareToPlay(spec);
+    adsr.setSampleRate(sampleRate);
+    filter.prepareToPlay(sampleRate, samplesPerBlock,outputChannels);
+    modAdsr.setSampleRate(sampleRate);
     gain.prepare(spec);
+    
     
     
     //between 0 and 1 for linear
@@ -63,14 +74,16 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     isPrepared = true;
 };
 
-void SynthVoice::update(const float attack, const float decay, const float release, const float sustain) {
+void SynthVoice::updateAdsr (const float attack, const float decay, const float release, const float sustain)
+{
     
     adsr.updateADSR(attack, decay, release, sustain);
     
 }; 
 
 
-void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
+void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
+{
     
     //stop execution of project if prepareToPlay not instantiated 
     jassert(isPrepared);
@@ -84,20 +97,24 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     //set avoid reallocating to true as we dont want to reallocate memory for the buffer
     //with each callback, we allocate just enough for additional samples
     synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
+    //activate ADSR, however does not modify anything in synth buffer
+    modAdsr.applyEnvelopeToBuffer(synthBuffer, 0, numSamples);
     synthBuffer.clear();
-    
     
     
     
     //create alias
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
     osc.getNextAudioBlock(audioBlock);
-    //once osc is run run audioBlock contains all sine info that gain can then
-    //act upon
-    gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     
-    //Apply ADSR to oscillator, synthBuffer is the audioBlock basically 
+    //Apply ADSR to oscillator, synthBuffer is the audioBlock basically
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
+        
+    //call process to actually run audio through it
+    filter.process(synthBuffer);
+    
+    gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+
     
     
     //crashes if startSample before operation is not zero
@@ -116,5 +133,19 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
             clearCurrentNote();
         }
     }
+    
+}
 
-};
+void SynthVoice::updateFilter (const int filterType, const float cutoff, const float resonance)
+{
+    
+    float modulator =  modAdsr.getNextSample();
+    
+    filter.updateParameters(filterType, cutoff, resonance, modulator);
+
+}
+
+void SynthVoice::updateModAdsr (const float attack, const float decay, const float release, const float sustain)
+{
+    modAdsr.updateADSR(attack, decay, release, sustain); 
+}

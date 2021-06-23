@@ -36,7 +36,8 @@ private:
     TapSynthAudioProcessor& audioProcessor;
     OscComponent osc;
     AdsrComponent adsr;
-    FilterComponent filter; 
+    FilterComponent filter;
+    AdsrComponent modAdsr; 
     
     
 

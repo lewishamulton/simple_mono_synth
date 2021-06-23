@@ -17,8 +17,8 @@ public:
     //methods always needed for any dsp process
     void prepareToPlay (double sampleRate, int samplesPerBlock, int numChannels);
     void process (juce::AudioBuffer<float>& buffer);
-    //for enumarated type
-    void updateParameters (const int filterType, const float freq, const float resonance);
+    //for enumarated type, with optional modulation 
+    void updateParameters (const int filterType, const float freq, const float resonance,const float modulator = 1.0f);
     void reset ();
     
     
