@@ -62,12 +62,12 @@ void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outp
     adsr.setSampleRate(sampleRate);
     filter.prepareToPlay(sampleRate, samplesPerBlock,outputChannels);
     modAdsr.setSampleRate(sampleRate);
-    gain.prepare(spec);
     
     
     
     //between 0 and 1 for linear
-    gain.setGainLinear(0.3f);
+    gain.prepare(spec);
+    gain.setGainLinear(0.07f);
     
     
     //prepare to play has been called, audio callback members can be used elsewhere

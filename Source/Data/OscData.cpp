@@ -12,8 +12,12 @@
 
 void OscData::prepareToPlay(juce::dsp::ProcessSpec& spec)
 {
+
+    prepare(spec);
+
     fmOsc.prepare(spec);
-    prepare(spec); 
+    gain.prepare(spec);
+    
 }
 
 
@@ -52,6 +56,11 @@ void OscData::setWaveFrequency(const int midiNoteNumber)
 
 }
 
+void OscData::setGainLevel(const float decibelLevel)
+{
+    gain.setGainDecibels (decibelLevel);
+}
+
 void OscData::getNextAudioBlock(juce::dsp::AudioBlock<float>& block)
 {
     
@@ -65,7 +74,8 @@ void OscData::getNextAudioBlock(juce::dsp::AudioBlock<float>& block)
         }
     }
     //process context replacing
-    process(juce::dsp::ProcessContextReplacing<float>(block));
+    process (juce::dsp::ProcessContextReplacing<float>(block));
+    gain.process (juce::dsp::ProcessContextReplacing<float> (block));
 }
 
 void OscData::setFmParams(const float depth, const float freq)

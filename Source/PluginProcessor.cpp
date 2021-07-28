@@ -104,8 +104,7 @@ void TapSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 
 void TapSynthAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -152,6 +151,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             
             //Oscillator
             auto& oscWaveChoice = *apvts.getRawParameterValue("OSC1WAVETYPE");
+            auto& oscGain = *apvts.getRawParameterValue("OSC1GAIN");
             auto& fmDepth = *apvts.getRawParameterValue("OSC1FMFREQ");
             auto& fmFreq = *apvts.getRawParameterValue("OSC1FMDEPTH");
             
@@ -176,6 +176,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             
             
             voice->getOscillator().setWaveType(oscWaveChoice);
+            voice->getOscillator().setGainLevel(oscGain); 
             voice->getOscillator().setFmParams(fmDepth, fmFreq);
             //load shows it's an atomic float
             voice->updateAdsr (attack.load(), decay.load(), release.load(), sustain.load());
@@ -208,15 +209,12 @@ juce::AudioProcessorEditor* TapSynthAudioProcessor::createEditor()
 //==============================================================================
 void TapSynthAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+
 }
 
 void TapSynthAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+
 }
 
 
@@ -242,6 +240,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     //OSC Select, 0 is default option
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray {"Sine","Saw","Square"}, 0));
     
+    //OSC Gain 
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
     
     //FM
     //skew factor is 0.3, logarithmic, slider focuses on lower end of freq/depth

@@ -7,7 +7,7 @@
 TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcessor& p)
     : AudioProcessorEditor (&p)
     , audioProcessor (p)
-    , osc (audioProcessor.apvts, "OSC1WAVETYPE","OSC1FMFREQ","OSC1FMDEPTH")
+    , osc (audioProcessor.apvts, "OSC1WAVETYPE", "OSC1GAIN", "OSC1FMFREQ", "OSC1FMDEPTH")
     , adsr ("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
     , filter (audioProcessor.apvts, "FILTERTYPE", "FILTERFREQ", "FILTERRES")
     , modAdsr ("Mod Envelope", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE")
@@ -15,7 +15,8 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (620, 500);
+    setSize (800, 500);
+    
             
     //make oscillator visible in GUI
     addAndMakeVisible(osc);
@@ -51,7 +52,7 @@ void TapSynthAudioProcessorEditor::resized()
     const auto paddingY = 35;
     //Y2 set below osc, y coordinate set at 35 with height of 200 then extra 35 padding of pixels hence 270
     const auto paddingY2 = 235;
-    const auto width = 300;
+    const auto width = 400;
     const auto height = 200;
     
     //x,y,width,height
