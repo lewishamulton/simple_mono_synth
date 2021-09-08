@@ -51,7 +51,7 @@ void OscData::setWaveType(const int choice)
 void OscData::setWaveFrequency(const int midiNoteNumber)
 {
     //sets the oscillator frequency allowing for different notes to be played, with fmMod modulating freq 
-    setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber) + fmMod);
+    setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber + lastPitch) + fmMod);
     lastMidiNote = midiNoteNumber;
 
 }
@@ -99,7 +99,7 @@ void OscData::setFmParams(const float depth, const float freq)
     fmOsc.setFrequency(freq);
     fmDepth = depth;
     
-    auto currentFreq = juce::MidiMessage::getMidiNoteInHertz(lastMidiNote) + fmMod;
+    auto currentFreq = juce::MidiMessage::getMidiNoteInHertz(lastMidiNote + lastPitch) + fmMod;
     
     //updates main oscillator, ensuring no negative frequencies
     setFrequency(currentFreq >=0 ? currentFreq : currentFreq * -1.0f);
