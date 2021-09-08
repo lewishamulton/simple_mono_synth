@@ -73,9 +73,18 @@ void OscData::getNextAudioBlock(juce::dsp::AudioBlock<float>& block)
             fmMod = fmOsc.processSample(block.getSample(ch, s)) * fmDepth;
         }
     }
-    //process context replacing
+
     process (juce::dsp::ProcessContextReplacing<float>(block));
     gain.process (juce::dsp::ProcessContextReplacing<float> (block));
+}
+
+
+//version of function used to replace getNextAudioBlock for multi osc synth 
+float OscData::processNextSample(float sample)
+{
+    //value of the wave at one given point in time
+    fmMod = fmOsc.processSample(sample) * fmDepth;
+    return gain.processSample(processSample(sample));
 }
 
 void OscData::setFmParams(const float depth, const float freq)

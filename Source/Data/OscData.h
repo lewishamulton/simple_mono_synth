@@ -21,6 +21,7 @@ public:
     void setWaveFrequency(const int midiNoteNumber);
     void setGainLevel(const float decibelLevel);
     void getNextAudioBlock(juce::dsp::AudioBlock<float>& block);
+    float processNextSample(float sample); 
     void setFmParams(const float fmDepth, const float freq); 
 
     
