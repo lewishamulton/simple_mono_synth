@@ -12,7 +12,7 @@
 #include "OscComponent.h"
 
 //==============================================================================
-OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String gainId, juce::String fmFreqId, juce::String fmDepthId)
+OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String gainId, juce::String pitchId, juce::String fmFreqId, juce::String fmDepthId)
 {
     juce::StringArray choices {"Sine", "Saw", "Square"};
     oscWaveSelector.addItemList(choices, 1);
@@ -22,6 +22,9 @@ OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::Stri
     
     //slider for gain control 
     setSliderWithLabel (gainSlider, gainLabel, apvts, gainId, gainAttachment);
+    
+    //slider for pitch
+    setSliderWithLabel(pitchSlider, pitchLabel, apvts, pitchId, pitchAttachment); 
     
     //slider for fm frequency/depth
     setSliderWithLabel (fmFreqSlider, fmFreqLabel, apvts, fmFreqId, fmFreqAttachment);
@@ -69,11 +72,16 @@ void OscComponent::resized()
     gainSlider.setBounds (oscWaveSelector.getRight(), startY, sliderWidth, sliderHeight);
     gainLabel.setBounds (gainSlider.getX(), gainSlider.getY() - labelYOffset, gainSlider.getWidth(), labelHeight);
     
-    fmFreqSlider.setBounds (gainSlider.getRight(), startY, sliderWidth, sliderHeight);
+    pitchSlider.setBounds(gainSlider.getRight(), startY, sliderWidth, sliderHeight);
+    pitchLabel.setBounds(pitchSlider.getX(), pitchSlider.getY() - labelYOffset, pitchSlider.getWidth(), labelHeight);
+    
+    fmFreqSlider.setBounds (pitchSlider.getRight(), startY, sliderWidth, sliderHeight);
     fmFreqLabel.setBounds (fmFreqSlider.getX(), fmFreqSlider.getY() - labelYOffset, fmFreqSlider.getWidth(), labelHeight);
 
     fmDepthSlider.setBounds (fmFreqSlider.getRight(), startY, sliderWidth, sliderHeight);
     fmDepthLabel.setBounds (fmDepthSlider.getX(), fmDepthSlider.getY() - labelYOffset, fmDepthSlider.getWidth(), labelHeight);
+    
+    
     
     
 }

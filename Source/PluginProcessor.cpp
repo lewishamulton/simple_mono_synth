@@ -152,11 +152,13 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             //Oscillators
             auto& oscWaveChoice1 = *apvts.getRawParameterValue("OSC1WAVETYPE");
             auto& oscGain1 = *apvts.getRawParameterValue("OSC1GAIN");
+            auto& oscPitch1 = *apvts.getRawParameterValue("OSC1PITCH");
             auto& fmDepth1 = *apvts.getRawParameterValue("OSC1FMFREQ");
             auto& fmFreq1 = *apvts.getRawParameterValue("OSC1FMDEPTH");
             
             auto& oscWaveChoice2 = *apvts.getRawParameterValue("OSC2WAVETYPE");
             auto& oscGain2 = *apvts.getRawParameterValue("OSC2GAIN");
+            auto& oscPitch2 = *apvts.getRawParameterValue("OSC2PITCH");
             auto& fmDepth2 = *apvts.getRawParameterValue("OSC2FMFREQ");
             auto& fmFreq2 = *apvts.getRawParameterValue("OSC2FMDEPTH");
             
@@ -182,10 +184,12 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             
             voice->getOscillator1().setWaveType(oscWaveChoice1);
             voice->getOscillator1().setGainLevel(oscGain1);
+            voice->getOscillator1().setPitch(oscPitch1);
             voice->getOscillator1().setFmParams(fmDepth1, fmFreq1);
             
             voice->getOscillator2().setWaveType(oscWaveChoice2);
             voice->getOscillator2().setGainLevel(oscGain2);
+            voice->getOscillator2().setPitch(oscPitch2);
             voice->getOscillator2().setFmParams(fmDepth2, fmFreq2);
             
             //load shows it's an atomic float
@@ -249,6 +253,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     //OSC Gain 
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2GAIN", "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    
+    //OSC Pitch
+    params.push_back (std::make_unique<juce::AudioParameterInt>("OSC1PITCH", "Oscillator 1 Pitch", -48, 48, 0));
+    params.push_back (std::make_unique<juce::AudioParameterInt>("OSC2PITCH", "Oscillator 2 Pitch", -48, 48, 0));
     
     //FM
     //skew factor is 0.3, logarithmic, slider focuses on lower end of freq/depth

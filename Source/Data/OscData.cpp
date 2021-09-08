@@ -56,6 +56,13 @@ void OscData::setWaveFrequency(const int midiNoteNumber)
 
 }
 
+void OscData::setPitch(const int pitch)
+{
+    lastPitch = pitch;
+    setFrequency (juce::MidiMessage::getMidiNoteInHertz ((lastMidiNote + lastPitch) + fmMod));
+}
+
+
 void OscData::setGainLevel(const float decibelLevel)
 {
     gain.setGainDecibels (decibelLevel);
