@@ -103,20 +103,17 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     modAdsr.applyEnvelopeToBuffer(synthBuffer, 0, numSamples);
     synthBuffer.clear();
     
-    //oscillators
-    for (int ch = 0; ch < synthBuffer.getNumChannels(); ++ch)
-    {
-        auto* buffer = synthBuffer.getWritePointer (ch, 0);
-        
-        for (int s = 0; s < synthBuffer.getNumSamples(); ++s)
-        {
-            buffer[s] = osc.processNextSample (buffer[s]) + osc2.processNextSample (buffer[s]);
-        }
-    }
+   
     
     
     //create alias
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
+    
+    
+    //oscillators
+    osc.getNextAudioBlock(audioBlock);
+    osc2.getNextAudioBlock(audioBlock);
+    
     gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     
     //osc.getNextAudioBlock(audioBlock);
