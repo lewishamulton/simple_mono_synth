@@ -13,6 +13,7 @@
 #include "UI/AdsrComponent.h"
 #include "UI/OscComponent.h"
 #include "UI/FilterComponent.h"
+#include "UI/EffectsComponent.h"
 
 //==============================================================================
 /**
@@ -37,7 +38,9 @@ private:
     OscComponent osc2;
     AdsrComponent adsr;
     FilterComponent filter;
-    AdsrComponent modAdsr; 
+    AdsrComponent modAdsr;
+    EffectsComponent effects;
+    
     
     
 

@@ -179,6 +179,10 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& modDecay = *apvts.getRawParameterValue("MODDECAY");
             auto& modSustain = *apvts.getRawParameterValue("MODSUSTAIN");
             auto& modRelease = *apvts.getRawParameterValue("MODRELEASE");
+            
+            //Effects Params
+            auto& distThresh = *apvts.getRawParameterValue("DISTTHRESH");
+            auto& distMix = *apvts.getRawParameterValue("DISTMIX");
 
             
             
@@ -196,12 +200,21 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             voice->updateAdsr (attack.load(), decay.load(), release.load(), sustain.load());
             voice->updateFilter (filterType.load(), cutoff.load(), resonance.load());
             voice->updateModAdsr(modAttack.load(), modDecay.load(), modRelease.load(), modSustain.load());
+            
         }
         
             
     }
-    
+    //synth sound
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    
+    
+    //effects now applied
+    
+    
+    
+    
+    
 }
 
 //==============================================================================
@@ -276,6 +289,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
      params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray {"Low-Pass","Band-Pass","High-Pass"}, 0));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERFREQ", "Filter Freq", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f,0.6f }, 200.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f}, 1.0f));
+    
+    //Effects
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTTHRESH", "Distortion Threshold", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.001f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTMIX", "Distortion Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.0f));
+    
+    
+    
+    
+    
     
     
     return { params.begin(), params.end() };

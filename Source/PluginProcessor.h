@@ -4,6 +4,7 @@
 #include <JuceHeader.h>
 #include "SynthVoice.h"
 #include "SynthSound.h"
+#include "Data/EffectsData.h"
 
 //==============================================================================
 /**
@@ -54,6 +55,8 @@ public:
 
 private:
     juce::Synthesiser synth;
+    EffectsData effectsProcessor;
+    
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParams();
     
