@@ -36,7 +36,8 @@ public:
 
     
     //inline function used to connect oscillator data to pluginprocessor
-    OscData& getOscillator() { return osc; }
+    OscData& getOscillator1() { return osc; }
+    OscData& getOscillator2() { return osc2; }
     
     
     
@@ -45,8 +46,10 @@ private:
     
     juce::AudioBuffer<float> synthBuffer; 
     
-    //Oscillator Declaration
+    //Oscillators Declaration
     OscData osc;
+    OscData osc2;
+    
     //Amplitude ADSR
     AdsrData adsr;
     //Filter Declaration

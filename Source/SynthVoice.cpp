@@ -21,6 +21,7 @@ void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::Synthesise
     
     //sets the oscillator frequency allowing for different notes to be played 
     osc.setWaveFrequency(midiNoteNumber);
+    osc2.setWaveFrequency(midiNoteNumber);
     adsr.noteOn();
     modAdsr.noteOn();
 };
@@ -59,6 +60,7 @@ void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outp
     
     //process chain oscillator -> amp adsr -> filter -> mod (filter) adsr
     osc.prepareToPlay(spec);
+    osc2.prepareToPlay(spec);
     adsr.setSampleRate(sampleRate);
     filter.prepareToPlay(sampleRate, samplesPerBlock,outputChannels);
     modAdsr.setSampleRate(sampleRate);
@@ -94,18 +96,27 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
         return;
     }
     
-    //set avoid reallocating to true as we dont want to reallocate memory for the buffer
-    //with each callback, we allocate just enough for additional samples
+    //set 'avoid reallocating' to true as we allocate just enough memory for additional samples
     synthBuffer.setSize(outputBuffer.getNumChannels(), numSamples, false, false, true);
+    
     //activate ADSR, however does not modify anything in synth buffer
     modAdsr.applyEnvelopeToBuffer(synthBuffer, 0, numSamples);
     synthBuffer.clear();
     
+   
     
     
     //create alias
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
+    
+    
+    //oscillators
     osc.getNextAudioBlock(audioBlock);
+    osc2.getNextAudioBlock(audioBlock);
+    
+    gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    
+    //osc.getNextAudioBlock(audioBlock);
     
     //Apply ADSR to oscillator, synthBuffer is the audioBlock basically
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
@@ -113,7 +124,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     //call process to actually run audio through it
     filter.process(synthBuffer);
     
-    gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    
 
     
     

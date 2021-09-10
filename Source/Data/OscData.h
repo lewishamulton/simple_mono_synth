@@ -19,8 +19,10 @@ public:
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
     void setWaveType(const int choice);
     void setWaveFrequency(const int midiNoteNumber);
+    void setPitch(const int pitch); 
     void setGainLevel(const float decibelLevel);
     void getNextAudioBlock(juce::dsp::AudioBlock<float>& block);
+    float processNextSample(float sample); 
     void setFmParams(const float fmDepth, const float freq); 
 
     
@@ -30,6 +32,7 @@ private:
     juce::dsp::Gain<float> gain; 
     float fmMod { 0.0f };
     float fmDepth { 0.0f };
-    int lastMidiNote; 
+    int lastPitch { 0 };
+    int lastMidiNote { 0 };
 
 };

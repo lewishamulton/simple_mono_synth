@@ -32,9 +32,9 @@ private:
     
     //method to affect slider parameters
     void setSliderParams (juce::Slider& slider);
-    
     TapSynthAudioProcessor& audioProcessor;
-    OscComponent osc;
+    OscComponent osc1;
+    OscComponent osc2;
     AdsrComponent adsr;
     FilterComponent filter;
     AdsrComponent modAdsr; 
