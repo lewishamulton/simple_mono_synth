@@ -18,7 +18,7 @@
 class EffectsComponent  : public juce::Component
 {
 public:
-    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distThreshId, juce::String distMixId);
+    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distThreshId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId);
     ~EffectsComponent() override;
 
     void paint (juce::Graphics&) override;

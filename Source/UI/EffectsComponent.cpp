@@ -12,11 +12,12 @@
 #include "EffectsComponent.h"
 
 //==============================================================================
-EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distThreshId, juce::String distMixId)
+ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distThreshId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId)
 {
     //Dist Threshold and Distortion Mix controls
     setSliderWithLabel(distThreshSlider, distThreshLabel , apvts, distThreshId, distThreshAttachment);
     setSliderWithLabel(distMixSlider, distMixLabel, apvts, distMixId, distMixAttachment);
+    
 
 }
 
@@ -26,28 +27,31 @@ EffectsComponent::~EffectsComponent()
 
 void EffectsComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
+    auto bounds = getLocalBounds().reduced (5);
+    auto labelSpace = bounds.removeFromTop (25.0f);
+    
+    g.fillAll (juce::Colours::black);
     g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("EffectsComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
+    g.setFont (20.0f);
+    g.drawText ("Effects", labelSpace.withX (5), juce::Justification::left);
+    g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
+    
 }
 
 void EffectsComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+    //static numbers for now
+    const auto startY = 55;
+    const auto sliderWidth = 100;
+    const auto sliderHeight = 90;
+    const auto labelYOffset = 20;
+    const auto labelHeight = 20;
+    
+    distThreshSlider.setBounds (10, startY, sliderWidth, sliderHeight);
+    distThreshLabel.setBounds (distThreshSlider.getX(), distThreshSlider.getY() - labelYOffset, distThreshSlider.getWidth(), labelHeight);
+    
+    distMixSlider.setBounds (distThreshSlider.getRight(), startY, sliderWidth, sliderHeight);
+    distMixLabel.setBounds (distMixSlider.getX(), distMixSlider.getY() - labelYOffset, distMixSlider.getWidth(), labelHeight);
 
 }
 

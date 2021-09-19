@@ -14,10 +14,13 @@
 class EffectsData
 {
 public:
-    void distortionProcess(AudioBuffer<float>& buffer, inputSample, const float thresh, const float mix);
-    void updateParameters(const float distThresh, const float distMix, const float delayTime, const int delayFeedback);
+    float distortionProcess(float inputSample);
+    void updateParameters(const float newDistThresh, const float newDistMix, const float newDelayTime, const float newDelayFeedback);
     
   
 private:
-    
+    float distThresh { 1.0f };
+    float distMix { 0.3f };
+    float delayTime { 1.0f };
+    float delayFeedback { 1 };
 };
