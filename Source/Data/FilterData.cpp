@@ -34,7 +34,7 @@ void FilterData::process (juce::AudioBuffer<float>& buffer)
     jassert (isPrepared);
 
     juce::dsp::AudioBlock<float> block { buffer };
-    //could possibly break, more testing needed
+    //more testing needed here for all conditions
     filter.process(juce::dsp::ProcessContextReplacing<float> { block });
 }
 

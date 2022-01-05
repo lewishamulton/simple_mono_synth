@@ -14,6 +14,9 @@
 #include "Data/OscData.h"
 #include "Data/AdsrData.h"
 #include "Data/FilterData.h"
+#include "Data/EffectsData.h"
+
+
 
 
 
@@ -26,13 +29,16 @@ public:
     void controllerMoved (int controllerNumber, int newControllerValue) override;
     void pitchWheelMoved (int newPitchWheelValue) override;
     
-    void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannels); 
+    void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannels);
     
     void renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples) override;
+
     
     void updateAdsr (const float attack, const float decay, const float release, const float sustain);
     void updateFilter (const int filterType, const float cutoff, const float resonance);
     void updateModAdsr (const float attack, const float decay, const float release, const float sustain);
+    void updateEffects (const float distThresh, const float distMix, const float delayTime, const float delayFeedback); 
+    
 
     
     //inline function used to connect oscillator data to pluginprocessor
@@ -57,7 +63,12 @@ private:
     //Modulation ADSR
     AdsrData modAdsr;
     
+    //Effects Processor
+    EffectsData effectsProcessor;
+    
     juce::dsp::Gain<float> gain;
+    
+    
     
     //check used to ensure that nothing is used in audio callback before it's instantiated
     bool isPrepared { false };

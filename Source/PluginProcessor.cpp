@@ -99,6 +99,9 @@ void TapSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
         
     }
     
+    //prepare the fx chain
+    fxChain.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+    
     
 }
 
@@ -186,7 +189,8 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& delayTime = *apvts.getRawParameterValue("DELAYTIME");
             auto& delayFeedback = *apvts.getRawParameterValue("DELAYFEEDBACK");
             
-        
+            fxChain.updateParameters(distThresh, distMix, delayTime, delayFeedback);
+            
             voice->getOscillator1().setWaveType(oscWaveChoice1);
             voice->getOscillator1().setGainLevel(oscGain1);
             voice->getOscillator1().setPitch(oscPitch1);
@@ -201,18 +205,17 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             voice->updateAdsr (attack.load(), decay.load(), release.load(), sustain.load());
             voice->updateFilter (filterType.load(), cutoff.load(), resonance.load());
             voice->updateModAdsr(modAttack.load(), modDecay.load(), modRelease.load(), modSustain.load());
-            
-            //update effects params
-            effectsProcessor.updateParameters(distThresh, distMix, delayTime, delayFeedback);
-            
+            voice->updateEffects(distThresh.load(), distMix.load(), delayTime.load(), delayFeedback.load());
         }
         
             
     }
     
-    
-    //synth sound
+    //synth sound is created
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    
+    fxChain.distortionProcess(buffer);
+
     
 
     
@@ -293,7 +296,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     
     //Effects
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTTHRESH", "Distortion Threshold", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.001f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTMIX", "Distortion Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTMIX", "Distortion Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.3f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYTIME", "Delay Time", juce::NormalisableRange<float> {0.0f, 3.0f, 0.01f}, 0.75f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYFEEDBACK", "Delay Feedback", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f},0.6));
     

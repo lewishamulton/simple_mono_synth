@@ -55,8 +55,7 @@ public:
 
 private:
     juce::Synthesiser synth;
-    EffectsData effectsProcessor;
-    
+    EffectsData fxChain; 
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParams();
     

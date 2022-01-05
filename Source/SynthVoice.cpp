@@ -136,7 +136,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     
     //need to add any info from the pluginProcessor's output buffer into synthBuffer
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
-        
+    
         outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);
         
         //tells synthesiser it has finished playing the note
@@ -159,4 +159,9 @@ void SynthVoice::updateFilter (const int filterType, const float cutoff, const f
 void SynthVoice::updateModAdsr (const float attack, const float decay, const float release, const float sustain)
 {
     modAdsr.updateADSR(attack, decay, release, sustain); 
+}
+
+void SynthVoice::updateEffects(const float distThresh, const float distMix, const float delayTime, const float delayFeedback)
+{
+    effectsProcessor.updateParameters(distThresh, distMix, delayTime, delayFeedback); 
 }
