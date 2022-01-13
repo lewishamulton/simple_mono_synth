@@ -18,13 +18,14 @@
 class EffectsComponent  : public juce::Component
 {
 public:
-    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distEngagedId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId);
+    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distEngagedId, juce::String distMixId,juce::String delayEngagedId, juce::String delayTimeId,juce::String delayFeedbackId, juce::String delayMixId);
     ~EffectsComponent() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
     
     bool distEngaged();
+    bool delayEngaged(); 
     
     
    
@@ -45,10 +46,26 @@ private:
     std::unique_ptr<Attachment> distMixAttachment;
     juce::Label distMixLabel { "Mix", "Mix" };
     
+    juce::Slider delayTimeSlider;
+    std::unique_ptr<Attachment> delayTimeAttachment;
+    juce::Label delayTimeLabel { "Time", "Time" };
+    
+    juce::Slider delayFeedbackSlider;
+    std::unique_ptr<Attachment> delayFeedbackAttachment;
+    juce::Label delayFeedbackLabel { "Feedback", "Feedback" };
+    
+    juce::Slider delayMixSlider;
+    std::unique_ptr<Attachment> delayMixAttachment;
+    juce::Label delayMixLabel { "Mix", "Mix" };
+    
+    
     using bAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
     
     juce::ToggleButton distEngage;
     std::unique_ptr<bAttachment> distEngageAttachment;
+    
+    juce::ToggleButton delayEngage;
+    std::unique_ptr<bAttachment> delayEngageAttachment;
     
     void setUpButton(juce::ToggleButton& tButton, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<bAttachment>& attachment);
     

@@ -186,10 +186,13 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             //Effects Params
             auto& distEngage = *apvts.getRawParameterValue("DISTENGAGE");
             auto& distMix = *apvts.getRawParameterValue("DISTMIX");
+            
+            auto& delayEngage = *apvts.getRawParameterValue("DELAYENGAGE");
             auto& delayTime = *apvts.getRawParameterValue("DELAYTIME");
             auto& delayFeedback = *apvts.getRawParameterValue("DELAYFEEDBACK");
+            auto& delayMix = *apvts.getRawParameterValue("DELAYMIX");
             
-            fxChain.updateParameters(distEngage, distMix, delayTime, delayFeedback);
+            fxChain.updateParameters(distEngage, distMix, delayEngage, delayTime, delayFeedback, delayMix);
             
             voice->getOscillator1().setWaveType(oscWaveChoice1);
             voice->getOscillator1().setGainLevel(oscGain1);
@@ -205,7 +208,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             voice->updateAdsr (attack.load(), decay.load(), release.load(), sustain.load());
             voice->updateFilter (filterType.load(), cutoff.load(), resonance.load());
             voice->updateModAdsr(modAttack.load(), modDecay.load(), modRelease.load(), modSustain.load());
-            voice->updateEffects(distEngage, distMix.load(), delayTime.load(), delayFeedback.load());
+            voice->updateEffects(distEngage, distMix.load(), delayEngage, delayTime.load(), delayFeedback.load(), delayMix.load());
         }
         
             
@@ -214,7 +217,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     //synth sound is created
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     //add the fx if engaged
-    fxChain.fxEngaged(buffer);
+    fxChain.fxEngaged(buffer, totalNumInputChannels, totalNumOutputChannels);
 
     
 
@@ -298,8 +301,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     //skew factor on distortion threshold
     params.push_back (std::make_unique<juce::AudioParameterBool>("DISTENGAGE", "Distortion Engage", false));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTMIX", "Distortion Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.3f));
+    params.push_back (std::make_unique<juce::AudioParameterBool>("DELAYENGAGE", "Delay Engage", false));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYTIME", "Delay Time", juce::NormalisableRange<float> {0.0f, 3.0f, 0.01f}, 0.75f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYFEEDBACK", "Delay Feedback", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f},0.6));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYMIX", "Delay Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.01f},1.0f));
+
     
     
     return { params.begin(), params.end() };

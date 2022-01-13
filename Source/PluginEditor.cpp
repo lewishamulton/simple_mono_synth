@@ -12,7 +12,7 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     , adsr ("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
     , filter (audioProcessor.apvts, "FILTERTYPE", "FILTERFREQ", "FILTERRES")
     , modAdsr ("Mod Envelope", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE")
-    , effects (audioProcessor.apvts,"DISTENGAGE", "DISTMIX", "DELAYTIME", "DELAYFEEDBACK")
+    , effects (audioProcessor.apvts,"DISTENGAGE", "DISTMIX", "DELAYENGAGE", "DELAYTIME", "DELAYFEEDBACK", "DELAYMIX")
 
 {
     // Make sure that before the constructor has finished, you've set the
@@ -70,7 +70,7 @@ void TapSynthAudioProcessorEditor::resized()
     adsr.setBounds (osc1.getRight(), paddingY, width, height);
     filter.setBounds(paddingX, paddingY2, width, height);
     modAdsr.setBounds(filter.getRight(), paddingY2, width, height);
-    effects.setBounds(osc2.getRight(), paddingY3, width, height);
+    effects.setBounds(osc2.getRight(), paddingY3, width, 300);
     
 
 }

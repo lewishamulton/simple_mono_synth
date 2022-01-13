@@ -12,16 +12,21 @@
 #include "EffectsComponent.h"
 
 //==============================================================================
- EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distEngagedId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId)
+ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distEngagedId, juce::String distMixId,juce::String delayEngagedId, juce::String delayTimeId,juce::String delayFeedbackId, juce::String delayMixId)
 {
-    //Distortion Engaged Button
-    setUpButton(distEngage, apvts, distEngagedId, distEngageAttachment); 
+    //Engaged Buttons
+    setUpButton(distEngage, apvts, distEngagedId, distEngageAttachment);
+    setUpButton(delayEngage, apvts, delayEngagedId, delayEngageAttachment); 
+    
     //Distortion Mix control
     setSliderWithLabel(distMixSlider, distMixLabel, apvts, distMixId, distMixAttachment);
     
-    
-   
+    //Delay Controls
+    setSliderWithLabel(delayTimeSlider, delayTimeLabel, apvts, delayTimeId, delayTimeAttachment);
+    setSliderWithLabel(delayFeedbackSlider, delayFeedbackLabel, apvts, delayFeedbackId, delayFeedbackAttachment);
+    setSliderWithLabel(delayMixSlider, delayMixLabel, apvts, delayMixId, delayMixAttachment);
 
+    
 }
 
 EffectsComponent::~EffectsComponent()
@@ -56,6 +61,19 @@ void EffectsComponent::resized()
     distMixLabel.setBounds (distMixSlider.getX(), distMixSlider.getY() - labelYOffset, distMixSlider.getWidth(), labelHeight);
     
     distEngage.setBounds(distMixSlider.getRight(), startY, sliderWidth, sliderHeight);
+    
+    delayTimeSlider.setBounds(0,startY + sliderHeight, sliderWidth, sliderHeight);
+    delayTimeLabel.setBounds(delayTimeSlider.getX(), delayTimeSlider.getY() - labelYOffset, delayTimeSlider.getWidth(), labelHeight);
+    
+    delayFeedbackSlider.setBounds(delayTimeSlider.getRight(),startY + sliderHeight, sliderWidth, sliderHeight);
+    delayFeedbackLabel.setBounds(delayFeedbackSlider.getX(), delayFeedbackSlider.getY() - labelYOffset, delayFeedbackSlider.getWidth(), labelHeight);
+    
+    delayMixSlider.setBounds(delayFeedbackSlider.getRight(), startY + sliderHeight, sliderWidth, sliderHeight);
+    delayMixLabel.setBounds(delayMixSlider.getX(), delayFeedbackSlider.getY() - labelYOffset, delayMixSlider.getWidth(), labelHeight);
+    delayEngage.setBounds(delayMixSlider.getRight(),startY + sliderHeight,sliderWidth, sliderHeight);
+    
+    
+    
 
 }
 
@@ -69,6 +87,17 @@ void EffectsComponent::resized()
         return false;
     }
         
+}
+
+bool EffectsComponent::delayEngaged()
+{
+    if(delayEngage.getToggleState())
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 
@@ -86,7 +115,7 @@ using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
 void EffectsComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment)
 {
-    slider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
+    slider.setSliderStyle (juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setTextBoxStyle (juce::Slider::TextBoxBelow, true, 50, 25);
     addAndMakeVisible (slider);
     
@@ -97,6 +126,7 @@ void EffectsComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& la
     label.setJustificationType (juce::Justification::centred);
     addAndMakeVisible (label);
 }
+
 
 using bAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
 
