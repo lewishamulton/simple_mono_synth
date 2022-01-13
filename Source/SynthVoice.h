@@ -37,7 +37,7 @@ public:
     void updateAdsr (const float attack, const float decay, const float release, const float sustain);
     void updateFilter (const int filterType, const float cutoff, const float resonance);
     void updateModAdsr (const float attack, const float decay, const float release, const float sustain);
-    void updateEffects (const float distThresh, const float distMix, const float delayTime, const float delayFeedback); 
+    void updateEffects (const bool distEngage, const float distMix, const float delayTime, const float delayFeedback);
     
 
     

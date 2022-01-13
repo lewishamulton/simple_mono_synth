@@ -161,7 +161,7 @@ void SynthVoice::updateModAdsr (const float attack, const float decay, const flo
     modAdsr.updateADSR(attack, decay, release, sustain); 
 }
 
-void SynthVoice::updateEffects(const float distThresh, const float distMix, const float delayTime, const float delayFeedback)
+void SynthVoice::updateEffects(const bool distEngage, const float distMix, const float delayTime, const float delayFeedback)
 {
-    effectsProcessor.updateParameters(distThresh, distMix, delayTime, delayFeedback); 
+    effectsProcessor.updateParameters(distEngage, distMix, delayTime, delayFeedback);
 }

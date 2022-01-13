@@ -12,7 +12,7 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     , adsr ("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
     , filter (audioProcessor.apvts, "FILTERTYPE", "FILTERFREQ", "FILTERRES")
     , modAdsr ("Mod Envelope", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE")
-    , effects (audioProcessor.apvts, "DISTTHRESH", "DISTMIX", "DELAYTIME", "DELAYFEEDBACK")
+    , effects (audioProcessor.apvts,"DISTENGAGE", "DISTMIX", "DELAYTIME", "DELAYFEEDBACK")
 
 {
     // Make sure that before the constructor has finished, you've set the
@@ -35,6 +35,7 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     
     //make effects Component in GUI
     addAndMakeVisible(effects);
+
 
 }
 

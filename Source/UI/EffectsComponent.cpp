@@ -12,12 +12,15 @@
 #include "EffectsComponent.h"
 
 //==============================================================================
- EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distThreshId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId)
+ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::String distEngagedId, juce::String distMixId,juce::String delayTimeId,juce::String delayFeedbackId)
 {
-    //Dist Threshold and Distortion Mix controls
-    setSliderWithLabel(distThreshSlider, distThreshLabel , apvts, distThreshId, distThreshAttachment);
+    //Distortion Engaged Button
+    setUpButton(distEngage, apvts, distEngagedId, distEngageAttachment); 
+    //Distortion Mix control
     setSliderWithLabel(distMixSlider, distMixLabel, apvts, distMixId, distMixAttachment);
     
+    
+   
 
 }
 
@@ -36,6 +39,7 @@ void EffectsComponent::paint (juce::Graphics& g)
     g.drawText ("Effects", labelSpace.withX (5), juce::Justification::left);
     g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
     
+    
 }
 
 void EffectsComponent::resized()
@@ -47,13 +51,28 @@ void EffectsComponent::resized()
     const auto labelYOffset = 20;
     const auto labelHeight = 20;
     
-    distThreshSlider.setBounds (10, startY, sliderWidth, sliderHeight);
-    distThreshLabel.setBounds (distThreshSlider.getX(), distThreshSlider.getY() - labelYOffset, distThreshSlider.getWidth(), labelHeight);
     
-    distMixSlider.setBounds (distThreshSlider.getRight(), startY, sliderWidth, sliderHeight);
+    distMixSlider.setBounds (0, startY, sliderWidth, sliderHeight);
     distMixLabel.setBounds (distMixSlider.getX(), distMixSlider.getY() - labelYOffset, distMixSlider.getWidth(), labelHeight);
+    
+    distEngage.setBounds(distMixSlider.getRight(), startY, sliderWidth, sliderHeight);
 
 }
+
+ bool EffectsComponent::distEngaged()
+{
+    if(distEngage.getToggleState())
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
+        
+}
+
+
+
 
 //reference slider as don't want a copy
 void EffectsComponent::setSliderParams(juce::Slider& slider)
@@ -78,4 +97,17 @@ void EffectsComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& la
     label.setJustificationType (juce::Justification::centred);
     addAndMakeVisible (label);
 }
+
+using bAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+
+void EffectsComponent::setUpButton(juce::ToggleButton &tButton, juce::AudioProcessorValueTreeState &apvts, juce::String paramId, std::unique_ptr<bAttachment> &attachment)
+{
+    tButton.setToggleState(false, juce::NotificationType::dontSendNotification);
+    addAndMakeVisible(tButton);
+    attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, paramId, tButton);
+    
+}
+
+
+
 
