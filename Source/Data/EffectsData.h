@@ -17,17 +17,17 @@ public:
     
     EffectsData(); 
     void prepareToPlay (double sampleRate, int samplesPerBlock, int numChannels);
-    void distortionProcess(juce::AudioBuffer<float>& synthBuffer);
-    void delayProcess(juce::AudioBuffer<float>& distBuffer, int numInputChannels, int numOutputChannels);
+    void distortionProcess(juce::dsp::AudioBlock<float>& block);
+    void delayProcess(juce::dsp::AudioBlock<float>& block);
     void updateParameters(const bool newDistEngaged, const float newDistMix,const bool newDelayEngaged, const float newDelayTime, const float newDelayFeedback, float newDelayMix); 
-    void fxEngaged(juce::AudioBuffer<float>& synthBuffer, int numInputChannels, int numOutputChannels);
+    void fxEngaged(juce::AudioBuffer<float>& synthBuffer);
     
     void reset() noexcept;
 
     
   
 private:
-    double sampleRate; 
+    double sampleRate { 44100.0 };
     
     bool distEngaged { false };
     float distMix { 0.3f };
@@ -37,17 +37,20 @@ private:
     float delayFeedback { 0.75f };
     float delayMix { 1.0f };
     
-    // circular buffer variables
-    juce::AudioBuffer<float> delayBuffer;
-    int delayBufferLength { 1 };
-    int delayReadPosition { 0 };
-    int delayWritePosition{ 0 };
     
     bool isPrepared  = false;
     enum{ preGainIndex, waveshaperIndex, postGainIndex };
 
     juce::dsp::ProcessorChain<juce::dsp::Gain<float>, juce::dsp::WaveShaper<float, std::function<float(float)>>, juce::dsp::Gain<float>> distFx;
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayFx { 44100 };
+    //array needed for feedback effect
+    std::array<float, 2> lastDelayEffectOutput;
+    // Double precision to avoid some approximation issues
+    juce::dsp::FirstOrderTPTFilter<double> smoothFilter;
     
-    juce::dsp::DelayLine<float> delayFx; 
+    void updateDelayLineSize();
+    int calculateDelayTimeSamples(float delayTimeSecs);
+    float getDelayedSample(float sample); 
+
     
 };

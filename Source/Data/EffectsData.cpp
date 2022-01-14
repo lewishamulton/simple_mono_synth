@@ -27,97 +27,97 @@ EffectsData::EffectsData()
     auto& postGain = distFx.template get<postGainIndex>();
     postGain.setGainDecibels (-5.0f);
     
+    //smoothing filter for delay
+    smoothFilter.setType(juce::dsp::FirstOrderTPTFilterType::lowpass);
+    smoothFilter.setCutoffFrequency(3000.0);
 }
 
 
 void EffectsData::prepareToPlay(double sampleRate, int samplesPerBlock, int numChannels)
 {
-   
+    delayFx.reset();
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = numChannels;
-    
-    sampleRate = spec.sampleRate;
-    
+        
     //set up delay buffer
-    delayBufferLength  = (int) 2.0 * sampleRate;
-    if (delayBufferLength < 1) {
-        delayBufferLength = 1;
-    }
-    
-    delayBuffer.setSize(2, delayBufferLength);
-    delayBuffer.clear();
-    
-    delayReadPosition = (int) (delayWritePosition - (delayTime * sampleRate) + delayBufferLength) % delayBufferLength;
+    updateDelayLineSize();
+    delayFx.setDelay(calculateDelayTimeSamples(delayTime));
     
     distFx.prepare(spec);
+    delayFx.prepare(spec);
+    smoothFilter.prepare(spec); 
     isPrepared = true;
 }
 
 
 
 
-void EffectsData::distortionProcess(juce::AudioBuffer<float>& synthBuffer)
+void EffectsData::distortionProcess(juce::dsp::AudioBlock<float>& block)
 {
     distFx.reset();
     
     //make sure prepareToPlay has been called before process
     jassert (isPrepared);
 
-    juce::dsp::AudioBlock<float> block { synthBuffer };
-    
     distFx.process(juce::dsp::ProcessContextReplacing<float> { block });
         
     
 }
 
-void EffectsData::delayProcess(juce::AudioBuffer<float>& distBuffer, int numInputChannels, int numOutputChannels)
+void EffectsData::delayProcess(juce::dsp::AudioBlock<float>& block)
 {
+    
+    juce::dsp::ProcessContextReplacing<float>context { block };
+    
     //make sure prepareToPlay has been called before process
     jassert (isPrepared);
     
-    const int numSamples = distBuffer.getNumSamples();
+    const auto& inputBlock  = context.getInputBlock();
+    const auto& outputBlock = context.getOutputBlock();
+    const auto numSamples  = inputBlock.getNumSamples();
+    const auto numChannels = inputBlock.getNumChannels();
     
-    int delayReadPos;
-    int delayWritePos;
-    
-    for(int channel = 0; channel < numInputChannels; ++channel) {
+    for (size_t channel = 0; channel < numChannels; ++channel) {
         
-        //set up our two buffers
-        float* channelData = distBuffer.getWritePointer(channel);
-        float* delayData = delayBuffer.getWritePointer(juce::jmin(channel, delayBuffer.getNumChannels() - 1));
+        auto* samplesIn  = inputBlock .getChannelPointer(channel);
+        auto* samplesOut = outputBlock.getChannelPointer(channel);
         
-        delayReadPos = delayReadPosition;
-        delayWritePos = delayWritePosition;
-        
-        for(int sample = 0; sample < numSamples; ++sample) {
-            const float inputSample = channelData[sample];
-            float outputSample = 0.0f;
+        for (size_t i = 0; i < numSamples; ++i) {
+            auto input = samplesIn[i] - lastDelayEffectOutput[channel];
+            auto delay = smoothFilter.processSample (int (channel), calculateDelayTimeSamples(delayTime));
             
-            outputSample = inputSample + (delayMix * delayData[delayReadPos]);
-            
-            delayData[delayWritePos] = inputSample + (delayData[delayReadPos] * delayFeedback);
-        
-            
-            //for updating and wrap around of circular buffer pointers
-            if (++delayReadPos >= delayBufferLength)
-                delayReadPos = 0;
-            if (++delayWritePos >= delayBufferLength)
-                delayWritePos = 0;
-            
-            
-            channelData[sample] = outputSample;
+            delayFx.pushSample (int (channel), input);
+            delayFx.setDelay ((float) delay);
+            const auto output =  delayFx.popSample (int (channel));
+            samplesOut[i] = input + delayMix*output;
+            lastDelayEffectOutput[channel] = output * delayFeedback;
         }
     }
-    
-    delayReadPosition = delayReadPos;
-    delayWritePosition = delayWritePos;
-    
-    //cleans the buffer just in case
-    //for (int i = numInputChannels; i < numOutputChannels; ++i)
-   //     distBuffer.clear (i, 0, distBuffer.getNumSamples());
 }
+
+void EffectsData::updateDelayLineSize()
+{
+    auto delayLineSizeSamples = 0;
+    jassert(delayTime > 0);
+    if (delayTime > 1) {
+        delayLineSizeSamples = (int) std::ceil(delayTime * 44100);
+        delayFx.setMaximumDelayInSamples(delayLineSizeSamples);
+    }
+}
+
+int EffectsData::calculateDelayTimeSamples(float delayTimeSecs)
+{
+    jassert(delayTimeSecs > 0);
+    int dSample =  juce::roundToInt(delayTimeSecs * sampleRate);
+    
+    return dSample;
+}
+
+
+
+
 
 
 void EffectsData::updateParameters(const bool newDistEngaged, const float newDistMix,const bool newDelayEngaged, const float newDelayTime, const float newDelayFeedback, float newDelayMix)
@@ -127,24 +127,26 @@ void EffectsData::updateParameters(const bool newDistEngaged, const float newDis
     
     delayEngaged = newDelayEngaged; 
     delayTime = newDelayTime;
-    delayReadPosition = (int) (delayWritePosition - (delayTime * sampleRate) + delayBufferLength) % delayBufferLength;
+    updateDelayLineSize();
     delayFeedback = newDelayFeedback;
     delayMix = newDelayMix;
 }
 
-void EffectsData::fxEngaged(juce::AudioBuffer<float>& synthBuffer, int numInputChannels, int numOutputChannels)
+void EffectsData::fxEngaged(juce::AudioBuffer<float>& synthBuffer)
 {
+    juce::dsp::AudioBlock<float> block { synthBuffer };
     if (distEngaged)
-          distortionProcess(synthBuffer);
-      
+          distortionProcess(block);
     if (delayEngaged)
-        delayProcess(synthBuffer, numInputChannels, numOutputChannels);
-    
+        delayProcess(block);
+
 }
 
 void EffectsData::reset() noexcept
 {
     distFx.reset();
+    delayFx.reset();
+    smoothFilter.reset();
 }
 
 
