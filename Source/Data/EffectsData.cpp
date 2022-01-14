@@ -100,11 +100,7 @@ void EffectsData::delayProcess(juce::dsp::AudioBlock<float>& block)
 void EffectsData::updateDelayLineSize()
 {
     auto delayLineSizeSamples = 0;
-    jassert(delayTime > 0);
-    if (delayTime > 1) {
-        delayLineSizeSamples = (int) std::ceil(delayTime * 44100);
-        delayFx.setMaximumDelayInSamples(delayLineSizeSamples);
-    }
+    jassert(delayTime > 0 && delayTime <= 1);
 }
 
 int EffectsData::calculateDelayTimeSamples(float delayTimeSecs)

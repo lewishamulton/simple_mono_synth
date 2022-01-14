@@ -302,7 +302,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     params.push_back (std::make_unique<juce::AudioParameterBool>("DISTENGAGE", "Distortion Engage", false));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DISTMIX", "Distortion Mix", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f}, 0.3f));
     params.push_back (std::make_unique<juce::AudioParameterBool>("DELAYENGAGE", "Delay Engage", false));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYTIME", "Delay Time", juce::NormalisableRange<float> {0.1f, 3.0f, 0.01f}, 0.75f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYTIME", "Delay Time", juce::NormalisableRange<float> {0.05f, 1.0f, 0.01f}, 0.75f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYFEEDBACK", "Delay Feedback", juce::NormalisableRange<float> {0.0f, 1.0f, 0.001f},0.6));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("DELAYMIX", "Delay Mix", juce::NormalisableRange<float> {0.1f, 1.0f, 0.01f},1.0f));
 
