@@ -27,6 +27,8 @@ public:
     
   
 private:
+    double sampleRate; 
+    
     bool distEngaged { false };
     float distMix { 0.3f };
     
@@ -45,5 +47,7 @@ private:
     enum{ preGainIndex, waveshaperIndex, postGainIndex };
 
     juce::dsp::ProcessorChain<juce::dsp::Gain<float>, juce::dsp::WaveShaper<float, std::function<float(float)>>, juce::dsp::Gain<float>> distFx;
+    
+    juce::dsp::DelayLine<float> delayFx; 
     
 };

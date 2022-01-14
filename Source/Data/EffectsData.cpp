@@ -38,6 +38,8 @@ void EffectsData::prepareToPlay(double sampleRate, int samplesPerBlock, int numC
     spec.sampleRate = sampleRate;
     spec.numChannels = numChannels;
     
+    sampleRate = spec.sampleRate;
+    
     //set up delay buffer
     delayBufferLength  = (int) 2.0 * sampleRate;
     if (delayBufferLength < 1) {
@@ -84,7 +86,8 @@ void EffectsData::delayProcess(juce::AudioBuffer<float>& distBuffer, int numInpu
         
         //set up our two buffers
         float* channelData = distBuffer.getWritePointer(channel);
-        float* delayData = delayBuffer.getWritePointer(fmin(channel, delayBuffer.getNumChannels() - 1));
+        float* delayData = delayBuffer.getWritePointer(juce::jmin(channel, delayBuffer.getNumChannels() - 1));
+        
         delayReadPos = delayReadPosition;
         delayWritePos = delayWritePosition;
         
@@ -92,9 +95,17 @@ void EffectsData::delayProcess(juce::AudioBuffer<float>& distBuffer, int numInpu
             const float inputSample = channelData[sample];
             float outputSample = 0.0f;
             
-            outputSample = (inputSample + delayMix * delayData[delayReadPos]);
+            outputSample = inputSample + (delayMix * delayData[delayReadPos]);
             
-            delayData[delayWritePos] = inputSample * (delayData[delayReadPos] * delayFeedback);
+            delayData[delayWritePos] = inputSample + (delayData[delayReadPos] * delayFeedback);
+        
+            
+            //for updating and wrap around of circular buffer pointers
+            if (++delayReadPos >= delayBufferLength)
+                delayReadPos = 0;
+            if (++delayWritePos >= delayBufferLength)
+                delayWritePos = 0;
+            
             
             channelData[sample] = outputSample;
         }
@@ -104,8 +115,8 @@ void EffectsData::delayProcess(juce::AudioBuffer<float>& distBuffer, int numInpu
     delayWritePosition = delayWritePos;
     
     //cleans the buffer just in case
-    for (int i = numInputChannels; i < numOutputChannels; ++i)
-        distBuffer.clear (i, 0, distBuffer.getNumSamples());
+    //for (int i = numInputChannels; i < numOutputChannels; ++i)
+   //     distBuffer.clear (i, 0, distBuffer.getNumSamples());
 }
 
 
@@ -116,6 +127,7 @@ void EffectsData::updateParameters(const bool newDistEngaged, const float newDis
     
     delayEngaged = newDelayEngaged; 
     delayTime = newDelayTime;
+    delayReadPosition = (int) (delayWritePosition - (delayTime * sampleRate) + delayBufferLength) % delayBufferLength;
     delayFeedback = newDelayFeedback;
     delayMix = newDelayMix;
 }
@@ -123,10 +135,10 @@ void EffectsData::updateParameters(const bool newDistEngaged, const float newDis
 void EffectsData::fxEngaged(juce::AudioBuffer<float>& synthBuffer, int numInputChannels, int numOutputChannels)
 {
     if (distEngaged)
-        distortionProcess(synthBuffer);
-    
+          distortionProcess(synthBuffer);
+      
     if (delayEngaged)
-        delayProcess(synthBuffer, numInputChannels, numOutputChannels); 
+        delayProcess(synthBuffer, numInputChannels, numOutputChannels);
     
 }
 

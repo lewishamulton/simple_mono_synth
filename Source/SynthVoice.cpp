@@ -116,7 +116,6 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     
     gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     
-    //osc.getNextAudioBlock(audioBlock);
     
     //Apply ADSR to oscillator, synthBuffer is the audioBlock basically
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
