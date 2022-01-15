@@ -42,8 +42,11 @@ public:
 
     
     //inline function used to connect oscillator data to pluginprocessor
-    OscData& getOscillator1() { return osc; }
-    OscData& getOscillator2() { return osc2; }
+    //OscData& getOscillator1() { return osc; }
+    //OscData& getOscillator2() { return osc2; }
+    
+    std::array<OscData, 2>& getOscillator1() { return osc1; }
+    std::array<OscData, 2>& getOscillator2() { return osc2; }
     
     
     
@@ -53,8 +56,12 @@ private:
     juce::AudioBuffer<float> synthBuffer; 
     
     //Oscillators Declaration
-    OscData osc;
-    OscData osc2;
+    //OscData osc;
+    //OscData osc2;
+    
+    static constexpr int numChannelsToProcess { 2 };
+    std::array<OscData, numChannelsToProcess> osc1;
+    std::array<OscData, numChannelsToProcess> osc2;
     
     //Amplitude ADSR
     AdsrData adsr;
