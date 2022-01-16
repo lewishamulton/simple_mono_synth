@@ -99,7 +99,6 @@ void EffectsData::delayProcess(juce::dsp::AudioBlock<float>& block)
 
 void EffectsData::updateDelayLineSize()
 {
-    auto delayLineSizeSamples = 0;
     jassert(delayTime > 0 && delayTime <= 1);
 }
 

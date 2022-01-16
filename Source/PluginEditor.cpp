@@ -15,6 +15,8 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     , effects (audioProcessor.apvts,"DISTENGAGE", "DISTMIX", "DELAYENGAGE", "DELAYTIME", "DELAYFEEDBACK", "DELAYMIX")
 
 {
+    
+    juce::LookAndFeel::setDefaultLookAndFeel(&customStyleSheet);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (800, 800);
@@ -42,7 +44,8 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
 
 TapSynthAudioProcessorEditor::~TapSynthAudioProcessorEditor()
 {
-    
+    juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
+
 }
 
 
@@ -50,7 +53,7 @@ TapSynthAudioProcessorEditor::~TapSynthAudioProcessorEditor()
 void TapSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
    
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colours::darkgrey);
 
 }
 

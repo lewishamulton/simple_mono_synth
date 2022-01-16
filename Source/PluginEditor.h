@@ -14,6 +14,7 @@
 #include "UI/OscComponent.h"
 #include "UI/FilterComponent.h"
 #include "UI/EffectsComponent.h"
+#include "StyleSheet.h"
 
 //==============================================================================
 /**
@@ -40,6 +41,8 @@ private:
     FilterComponent filter;
     AdsrComponent modAdsr;
     EffectsComponent effects;
+    
+    juce::CustomStyleSheet customStyleSheet;
     
     
     

@@ -14,8 +14,11 @@
 //==============================================================================
 OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String gainId, juce::String pitchId, juce::String fmFreqId, juce::String fmDepthId)
 {
+    
+    
     juce::StringArray choices {"Sine", "Saw", "Square"};
     oscWaveSelector.addItemList(choices, 1);
+    oscWaveSelector.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colours::darkgrey);
     addAndMakeVisible(oscWaveSelector);
     
     oscWaveSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, waveSelectorId, oscWaveSelector);
@@ -30,7 +33,7 @@ OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::Stri
     setSliderWithLabel (fmFreqSlider, fmFreqLabel, apvts, fmFreqId, fmFreqAttachment);
     setSliderWithLabel (fmDepthSlider, fmDepthLabel, apvts, fmDepthId, fmDepthAttachment);
     
-    //oscillator selector 
+    //oscillator selector
     waveSelectorLabel.setColour (juce::Label::ColourIds::textColourId, juce::Colours::white);
     waveSelectorLabel.setFont (15.0f);
     waveSelectorLabel.setJustificationType (juce::Justification::left);
@@ -47,12 +50,9 @@ OscComponent::~OscComponent()
 void OscComponent::paint (juce::Graphics& g)
 {
     auto bounds = getLocalBounds().reduced (5);
-    auto labelSpace = bounds.removeFromTop (25.0f);
-    
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colours::darkgrey);
     g.setColour (juce::Colours::white);
     g.setFont (20.0f);
-    g.drawText ("Oscillator", labelSpace.withX (5), juce::Justification::left);
     g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
     
 }
@@ -86,12 +86,17 @@ void OscComponent::resized()
     
 }
 
+
+
+
 using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
 void OscComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment)
 {
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    slider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::whitesmoke);
+    slider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::whitesmoke);
     addAndMakeVisible(slider);
     
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);

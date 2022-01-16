@@ -43,12 +43,10 @@ FilterComponent::~FilterComponent()
 void FilterComponent::paint (juce::Graphics& g)
 {
     auto bounds = getLocalBounds().reduced (5);
-    auto labelSpace = bounds.removeFromTop (25.0f);
     
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colours::darkgrey);
     g.setColour (juce::Colours::white);
     g.setFont (20.0f);
-    g.drawText ("Filter", labelSpace.withX (5), juce::Justification::left);
     g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
 }
 
@@ -77,6 +75,8 @@ void FilterComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& lab
 {
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    slider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::whitesmoke);
+    slider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::whitesmoke);
     addAndMakeVisible(slider);
     
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);

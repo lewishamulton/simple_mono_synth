@@ -34,7 +34,7 @@ void AdsrComponent::paint (juce::Graphics& g)
     auto labelSpace = bounds.removeFromTop (25.0f);
     
     //create white box to house component UI 
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colours::darkgrey);
     g.setColour (juce::Colours::white);
     g.setFont (20.0f);
     g.drawText (componentName, labelSpace.withX (5), juce::Justification::left);
@@ -69,21 +69,14 @@ void AdsrComponent::resized()
 }
 
 
-
-//reference slider as don't want a copy
-void AdsrComponent::setSliderParams(juce::Slider& slider)
-{
-    slider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
-    addAndMakeVisible(slider);
-}
-
 using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
 void AdsrComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment)
 {
     slider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
-    slider.setTextBoxStyle (juce::Slider::TextBoxBelow, true, 50, 25);
+    slider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::whitesmoke);
+    slider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::whitesmoke);
+    slider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 25);
     addAndMakeVisible (slider);
     
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);
