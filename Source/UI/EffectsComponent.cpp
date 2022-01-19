@@ -75,13 +75,16 @@ void EffectsComponent::resized()
     
     //Set up engage buttons
     engageBoxDelay.startNewSubPath(665, distMixSlider.getY());
-    engageBoxDelay.lineTo((665+30), (distMixSlider.getY() - 30 - elementPadding));
+    engageBoxDelay.lineTo((665+30), (distMixSlider.getY() - 30));
     engageBoxDelay.closeSubPath();
     engageBoxDelay.addRectangle(engageBoxDelay.getBounds());
+    delayEngage.setBounds(275, delayMixSlider.getY()+sliderHeight/3, 30, 30);
+
     engageBoxDist.startNewSubPath(665, delayMixSlider.getY());
     engageBoxDist.lineTo((665+30), (delayMixSlider.getY() - 30));
     engageBoxDist.closeSubPath();
     engageBoxDist.addRectangle(engageBoxDist.getBounds());
+    distEngage.setBounds(275, distMixSlider.getY()+sliderHeight/3, 30, 30);
     
     delayEngage.setShape(engageBoxDelay, false, true, false);
     distEngage.setShape(engageBoxDist, true, true, false);
@@ -145,15 +148,6 @@ void EffectsComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& la
 
 
 using bAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
-
-void EffectsComponent::setUpButton(juce::ToggleButton &tButton, juce::AudioProcessorValueTreeState &apvts, juce::String paramId, std::unique_ptr<bAttachment> &attachment)
-{
-    tButton.setToggleState(false, juce::NotificationType::dontSendNotification);
-    addAndMakeVisible(tButton);
-    attachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, paramId, tButton);
-    
-}
-
 
 void EffectsComponent::setUpButton(juce::ShapeButton& tButton, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<bAttachment>& attachment)
 {

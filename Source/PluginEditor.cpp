@@ -56,7 +56,9 @@ void TapSynthAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillAll (juce::Colour(0x1001312));
     
     g.setFont (20.0f);
-    g.drawText ("osc", juce::Rectangle<int>(5, 10, 30, 40), juce::Justification::left);
+    //g.drawText ("mono.", juce::Rectangle<int>(5, 10, 30, 40), juce::Justification::left);
+    g.setColour(juce::Colours::whitesmoke);
+    g.drawText("mono.", 20, 10, 60, 30, juce::Justification::left);
 
 }
 

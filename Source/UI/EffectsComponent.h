@@ -47,7 +47,7 @@ private:
 
     juce::Slider distMixSlider;
     std::unique_ptr<Attachment> distMixAttachment;
-    juce::Label distMixLabel { "Mix", "mix" };
+    juce::Label distMixLabel { "Mix", "dist" };
     
     juce::Slider delayTimeSlider;
     std::unique_ptr<Attachment> delayTimeAttachment;
