@@ -18,4 +18,10 @@ Feel free to download and add to it, and I want to continue adding and improving
 
 If you download a copy of JUCE (https://juce.com/) and the source code then you can compile the code yourself locally and use it in any DAW (**however** I've only tested the mono synth in Ableton Live). Due to the version of JUCE framework I'm using I can't compile/distribute binaries of the software. 
 
+## To be Added 
+
+- LaGrange Interpolation for the digital delay effect for an improved sound to the effect 
+- Refactoring of PluginProcessor and SynthVoice class so the FX section is not 'piped through' SynthVoice and is conceptually seperate to the code that generates the standard synth sound.
+- Refactoring component code so less hardcoded pixel values of components are used. Consider switching to JUCE flexbox for a resizable window. 
+
 
