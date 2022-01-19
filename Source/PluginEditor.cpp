@@ -19,23 +19,23 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     juce::LookAndFeel::setDefaultLookAndFeel(&customStyleSheet);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (800, 800);
+    setSize (700, 500);
+    
+    
+    //sets labels for each section of synth (oscillators, filter and fx)
+    
+    
     
             
-    //make oscillator visible in GUI
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     
-    //make ADSR visible in GUI
     addAndMakeVisible(adsr);
     
-    //make filter visible in GUI
     addAndMakeVisible(filter);
     
-    //make mod ADSR in GUI
     addAndMakeVisible(modAdsr);
     
-    //make effects Component in GUI
     addAndMakeVisible(effects);
 
 
@@ -53,27 +53,36 @@ TapSynthAudioProcessorEditor::~TapSynthAudioProcessorEditor()
 void TapSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
    
-    g.fillAll (juce::Colours::darkgrey);
+    g.fillAll (juce::Colour(0x1001312));
+    
+    g.setFont (20.0f);
+    g.drawText ("osc", juce::Rectangle<int>(5, 10, 30, 40), juce::Justification::left);
 
 }
 
 void TapSynthAudioProcessorEditor::resized()
 {
     const auto paddingX = 5;
-    const auto paddingY = 35;
-    //Y2 set below osc, y coordinate set at 35 with height of 200 then extra 35 padding of pixels hence 270
-    const auto paddingY2 = 235;
-    const auto paddingY3 = 400;
-    const auto width = 400;
-    const auto height = 200;
+    const auto paddingY = 0;
+    //element padding is the space between elements in a section (e.g space between the 2 oscillators on the oscillator section)
+    const auto elementPadding = 80;
+    //Y2 is the spacing between row 1 (ADSR + osc) and row 2 (filter + fx) of synth
+    const auto paddingY2 = 250;
+    const auto width = 350;
+    const auto height = 250;
+    const auto sliderAndLabelHeight = 125;
     
     //x,y,width,height
-    osc1.setBounds (paddingX, paddingY, width, height);
-    osc2.setBounds (paddingX, paddingY3, width, height);
+    osc1.setBounds (paddingX, paddingY, width, sliderAndLabelHeight);
+    osc2.setBounds (paddingX, elementPadding, width, sliderAndLabelHeight);
     adsr.setBounds (osc1.getRight(), paddingY, width, height);
-    filter.setBounds(paddingX, paddingY2, width, height);
-    modAdsr.setBounds(filter.getRight(), paddingY2, width, height);
-    effects.setBounds(osc2.getRight(), paddingY3, width, 300);
+    filter.setBounds(paddingX, paddingY2, width, sliderAndLabelHeight);
+    
+    //20 accounts for change in ADSR slider height
+    modAdsr.setBounds(paddingX,(paddingY2 + elementPadding + 30), width, sliderAndLabelHeight);
+    effects.setBounds(filter.getRight(), paddingY2, width, height);
+    
+
     
 
 }
