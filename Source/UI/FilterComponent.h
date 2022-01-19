@@ -36,9 +36,9 @@ private:
     std::unique_ptr<Attachment> filterFreqAttachment;
     std::unique_ptr<Attachment> filterResAttachment;
     
-    juce::Label filterSelectorLabel { "Filter Type", "Filter Type" };
-    juce::Label filterFreqLabel {"Filter Freq", "Filter Freq" };
-    juce::Label filterResLabel { "Filter Res", "Filter Res" };
+    juce::Label filterSelectorLabel { "Filter Type", "filter" };
+    juce::Label filterFreqLabel {"Filter Freq", "freq" };
+    juce::Label filterResLabel { "Filter Res", "res" };
     
     
     

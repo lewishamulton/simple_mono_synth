@@ -62,6 +62,12 @@ void OscData::setPitch(const int pitch)
     setFrequency (juce::MidiMessage::getMidiNoteInHertz ((lastMidiNote + lastPitch) + fmMod));
 }
 
+ void OscData::setUnisonPitch(const int pitch)
+{
+    lastPitch = pitch;
+    setFrequency (juce::MidiMessage::getMidiNoteInHertz ((lastMidiNote + lastPitch + 1.1f) + fmMod));
+}
+
 
 void OscData::setGainLevel(const float decibelLevel)
 {

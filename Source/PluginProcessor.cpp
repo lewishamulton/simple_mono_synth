@@ -194,16 +194,18 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             
             fxChain.updateParameters(distEngage, distMix, delayEngage, delayTime, delayFeedback, delayMix);
             
-            voice->getOscillator1().setWaveType(oscWaveChoice1);
-            voice->getOscillator1().setGainLevel(oscGain1);
-            voice->getOscillator1().setPitch(oscPitch1);
-            voice->getOscillator1().setFmParams(fmDepth1, fmFreq1);
-            
-            voice->getOscillator2().setWaveType(oscWaveChoice2);
-            voice->getOscillator2().setGainLevel(oscGain2);
-            voice->getOscillator2().setPitch(oscPitch2);
-            voice->getOscillator2().setFmParams(fmDepth2, fmFreq2);
-            
+             for (int i = 0; i < getTotalNumOutputChannels(); i++)
+            {
+                voice->getOscillator1()[i].setWaveType(oscWaveChoice1);
+                voice->getOscillator1()[i].setGainLevel(oscGain1);
+                voice->getOscillator1()[i].setPitch(oscPitch1);
+                voice->getOscillator1()[i].setFmParams(fmDepth1, fmFreq1);
+                
+                voice->getOscillator2()[i].setWaveType(oscWaveChoice2);
+                voice->getOscillator2()[i].setGainLevel(oscGain2);
+                voice->getOscillator2()[i].setPitch(oscPitch2);
+                voice->getOscillator2()[i].setFmParams(fmDepth2, fmFreq2);
+            }
             //load shows it's an atomic float
             voice->updateAdsr (attack.load(), decay.load(), release.load(), sustain.load());
             voice->updateFilter (filterType.load(), cutoff.load(), resonance.load());

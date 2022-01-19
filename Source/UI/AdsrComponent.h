@@ -49,10 +49,10 @@ private:
     
     
     //labels
-    juce::Label attackLabel { "Attack", "A" };
-    juce::Label decayLabel { "Decay", "D" };
-    juce::Label sustainLabel { "Sustain", "S" };
-    juce::Label releaseLabel { "Release", "R" };
+    juce::Label attackLabel { "Attack", "a" };
+    juce::Label decayLabel { "Decay", "d" };
+    juce::Label sustainLabel { "Sustain", "s" };
+    juce::Label releaseLabel { "Release", "r" };
     
     //component name
     juce::String componentName {"Osc"};

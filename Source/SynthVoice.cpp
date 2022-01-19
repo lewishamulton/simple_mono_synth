@@ -19,9 +19,11 @@ bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound)
 void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
 {
     
-    //sets the oscillator frequency allowing for different notes to be played 
-    osc.setWaveFrequency(midiNoteNumber);
-    osc2.setWaveFrequency(midiNoteNumber);
+    //sets the oscillator frequency allowing for different notes to be played
+    for (int channel = 0; channel < numChannelsToProcess; ++channel) {
+           osc1[channel].setWaveFrequency(midiNoteNumber);
+           osc2[channel].setWaveFrequency(midiNoteNumber);
+        }
     adsr.noteOn();
     modAdsr.noteOn();
 };
@@ -59,8 +61,10 @@ void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outp
     spec.numChannels = outputChannels;
     
     //process chain oscillator -> amp adsr -> filter -> mod (filter) adsr
-    osc.prepareToPlay(spec);
-    osc2.prepareToPlay(spec);
+     for (int channel = 0; channel < numChannelsToProcess; ++channel) {
+        osc1[channel].prepareToPlay(spec);
+        osc2[channel].prepareToPlay(spec);
+     }
     adsr.setSampleRate(sampleRate);
     filter.prepareToPlay(sampleRate, samplesPerBlock,outputChannels);
     modAdsr.setSampleRate(sampleRate);
@@ -102,18 +106,16 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float> &outputBuffer, int st
     //activate ADSR, however does not modify anything in synth buffer
     modAdsr.applyEnvelopeToBuffer(synthBuffer, 0, numSamples);
     synthBuffer.clear();
-    
-   
-    
-    
+    for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
+        
+        auto* buffer = synthBuffer.getWritePointer (channel, 0);
+        for (int s = 0; s < synthBuffer.getNumSamples(); ++s) {
+            buffer[s] = osc1[channel].processNextSample (buffer[s]) + osc2[channel].processNextSample (buffer[s]);
+        }
+    }
     //create alias
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
-    
-    
-    //oscillators
-    osc.getNextAudioBlock(audioBlock);
-    osc2.getNextAudioBlock(audioBlock);
-    
+
     gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     
     

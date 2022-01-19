@@ -14,8 +14,10 @@
 //==============================================================================
 FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& apvts, juce::String filterTypeSelectorId, juce::String filterFreqId, juce::String filterResId)
 {
-    juce::StringArray choices {"Low-Pass", "Band-Pass", "High-Pass"};
+    juce::StringArray choices {"lo-pass", "band-pass", "hi-pass"};
     filterTypeSelector.addItemList(choices, 1);
+    filterTypeSelector.setColour(juce::ComboBox::ColourIds::backgroundColourId, juce::Colour(0x1001312));
+    filterTypeSelector.setColour(juce::ComboBox::ColourIds::outlineColourId, juce::Colour(0x1001312));
     addAndMakeVisible(filterTypeSelector);
     
     filterTypeSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, filterTypeSelectorId, filterTypeSelector);
@@ -43,21 +45,19 @@ FilterComponent::~FilterComponent()
 void FilterComponent::paint (juce::Graphics& g)
 {
     auto bounds = getLocalBounds().reduced (5);
-    auto labelSpace = bounds.removeFromTop (25.0f);
     
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colour(0x1001312));
     g.setColour (juce::Colours::white);
     g.setFont (20.0f);
-    g.drawText ("Filter", labelSpace.withX (5), juce::Justification::left);
-    g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
+    //g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
 }
 
 void FilterComponent::resized()
 {
     //static numbers for now
     const auto startY = 55;
-    const auto sliderWidth = 100;
-    const auto sliderHeight = 90;
+    const auto sliderWidth = 80;
+    const auto sliderHeight = 70;
     const auto labelYOffset = 20;
     const auto labelHeight = 20;
     
@@ -76,7 +76,9 @@ using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 void FilterComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment)
 {
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 50, 25);
+    slider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::whitesmoke);
+    slider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::whitesmoke);
     addAndMakeVisible(slider);
     
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);

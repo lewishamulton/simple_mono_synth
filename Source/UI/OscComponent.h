@@ -43,11 +43,11 @@ private:
     std::unique_ptr<Attachment> pitchAttachment;
     
     
-    juce::Label fmFreqLabel { "FM Freq", "FM Freq" };
-    juce::Label fmDepthLabel {"FM Depth", "FM Depth" };
-    juce::Label waveSelectorLabel { "Wave Type", "Wave Type" };
-    juce::Label gainLabel { "Gain", "Gain" };
-    juce::Label pitchLabel {"Pitch", "Pitch"};
+    juce::Label fmFreqLabel { "FM Freq", "fm freq" };
+    juce::Label fmDepthLabel {"FM Depth", "fm depth" };
+    juce::Label waveSelectorLabel { "Wave Type", "wave" };
+    juce::Label gainLabel { "Gain", "gain" };
+    juce::Label pitchLabel {"Pitch", "pitch"};
     
     void setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment);
     

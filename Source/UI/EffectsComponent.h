@@ -41,33 +41,38 @@ private:
     
     void setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment);
     
+    //Shapes for engage buttons
+    juce::Path engageBoxDist = juce::Path();
+    juce::Path engageBoxDelay = juce::Path();
 
     juce::Slider distMixSlider;
     std::unique_ptr<Attachment> distMixAttachment;
-    juce::Label distMixLabel { "Mix", "Mix" };
+    juce::Label distMixLabel { "Mix", "dist" };
     
     juce::Slider delayTimeSlider;
     std::unique_ptr<Attachment> delayTimeAttachment;
-    juce::Label delayTimeLabel { "Time", "Time" };
+    juce::Label delayTimeLabel { "Time", "time" };
     
     juce::Slider delayFeedbackSlider;
     std::unique_ptr<Attachment> delayFeedbackAttachment;
-    juce::Label delayFeedbackLabel { "Feedback", "Feedback" };
+    juce::Label delayFeedbackLabel { "Feedback", "fb" };
     
     juce::Slider delayMixSlider;
     std::unique_ptr<Attachment> delayMixAttachment;
-    juce::Label delayMixLabel { "Mix", "Mix" };
+    juce::Label delayMixLabel { "Mix", "mix" };
     
     
     using bAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
     
-    juce::ToggleButton distEngage;
+    juce::ShapeButton distEngage {"Dist",juce::Colours::dimgrey, juce::Colours::darkgrey, juce::Colours::whitesmoke };
     std::unique_ptr<bAttachment> distEngageAttachment;
     
-    juce::ToggleButton delayEngage;
+    juce::ShapeButton delayEngage {"Delay",juce::Colours::dimgrey, juce::Colours::darkgrey, juce::Colours::whitesmoke };
     std::unique_ptr<bAttachment> delayEngageAttachment;
     
     void setUpButton(juce::ToggleButton& tButton, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<bAttachment>& attachment);
+    void setUpButton(juce::ShapeButton& tButton, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<bAttachment>& attachment);
+    
     
 
     

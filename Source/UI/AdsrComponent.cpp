@@ -30,15 +30,9 @@ AdsrComponent::~AdsrComponent()
 void AdsrComponent::paint (juce::Graphics& g)
 {
     
-    auto bounds = getLocalBounds().reduced (5);
-    auto labelSpace = bounds.removeFromTop (25.0f);
-    
-    //create white box to house component UI 
-    g.fillAll (juce::Colours::black);
+    g.fillAll (juce::Colour(0x1001312));
     g.setColour (juce::Colours::white);
-    g.setFont (20.0f);
-    g.drawText (componentName, labelSpace.withX (5), juce::Justification::left);
-    g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
+    //g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
 }
 
 void AdsrComponent::resized()
@@ -46,9 +40,9 @@ void AdsrComponent::resized()
     const auto bounds = getLocalBounds().reduced (10);
     const auto padding = 10;
     const auto sliderWidth = bounds.getWidth() / 4 - padding;
-    const auto sliderHeight = bounds.getHeight() - 45;
+    const auto sliderHeight = bounds.getHeight() - 25;
     const auto sliderStartX = padding + 5;
-    const auto sliderStartY = 55;
+    const auto sliderStartY = 35;
     const auto labelYOffset = 20;
     const auto labelHeight = 20;
     const auto labelStart = sliderStartY - labelYOffset;
@@ -69,21 +63,14 @@ void AdsrComponent::resized()
 }
 
 
-
-//reference slider as don't want a copy
-void AdsrComponent::setSliderParams(juce::Slider& slider)
-{
-    slider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
-    addAndMakeVisible(slider);
-}
-
 using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
 void AdsrComponent::setSliderWithLabel (juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId, std::unique_ptr<Attachment>& attachment)
 {
     slider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
-    slider.setTextBoxStyle (juce::Slider::TextBoxBelow, true, 50, 25);
+    slider.setColour(juce::Slider::ColourIds::rotarySliderFillColourId, juce::Colours::whitesmoke);
+    slider.setColour(juce::Slider::ColourIds::thumbColourId, juce::Colours::whitesmoke);
+    slider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 25);
     addAndMakeVisible (slider);
     
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);
